@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>lilXii — LX</title>
+  <rect width="64" height="64" rx="12" fill="#0a0c10"/>
+  <g fill="#b7f87a">
+    <path d="M9 15h8v27h10v8H9Z"/>
+    <path d="M29 15h9l5 10 5-10h9L48 32l10 18H48l-5-10-5 10h-9l9-18Z"/>
+  </g>
+</svg>

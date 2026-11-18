@@ -1,0 +1,75 @@
+# Dependencies, builds and test output
+node_modules/
+dist/
+dist-subpath/
+.vite/
+coverage/
+test-results/
+playwright-report/
+tmp/
+output/
+*.tsbuildinfo
+
+# Local tools, editor state and caches
+.codex/
+.agents/
+.vscode/
+.idea/
+*.code-workspace
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*.log
+
+# Credentials and machine-specific configuration
+.env*
+.npmrc
+.pypirc
+.netrc
+.git-credentials
+.aws/
+.azure/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+credentials*.json
+secrets*.json
+*.secrets.*
+
+# Reference material is private by default, not part of a future public repo.
+references/
+car-prototypes/preview.png
+/private/
+/local-only/
+# Agent guidance, planning drafts and internal notes stay local.
+/website-spec/
+*.md
+!/README.md
+*.ppt
+*.pptx
+*.pptm
+*.doc
+*.docx
+*.docm
+*.xls
+*.xlsx
+*.xlsm
+*.pdf
+# Explicitly prepared public résumé PDFs may be added here.
+!/public/documents/*.pdf
+*.psd
+*.blend
+*.blend1
+*.zip
+*.7z
+*.rar
+*.bak
