@@ -7,9 +7,8 @@ export const brand = {
   title: 'lilXii | Portfolio',
   icon: 'lilxii-icon.svg',
 };
-export const pending = text('To be added', '待補內容');
 export const profile = {
-  name: text('Name to be added', '姓名待補'),
+  name: text('ChenShi Liu', '劉宸希'),
   headline: text('AI Product Strategy · XR Development · UX Research', 'AI 產品規劃 · XR 開發 · UX 研究'),
   tagline: text('From user research to interactive prototypes, connecting AI, XR and human experience.', '從使用者研究到互動原型，連結 AI、XR 與人的體驗。'),
   bio: text('My work spans AI product planning, XR development and user research. With Unity, Python and video production, I turn research questions and creative ideas into experiences that can be tested.', '我的工作橫跨 AI 產品規劃、XR 互動開發與使用者研究，結合 Unity、Python 與影音製作經驗，將研究問題與創意轉化為可體驗、可測試的互動原型。'),

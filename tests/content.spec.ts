@@ -22,7 +22,7 @@ test('theme collections, FoxRAG deep link, language persistence and related rese
   await expect(page.getByText('neither the web version nor the LINE Bot was officially launched', { exact: false })).toBeVisible();
   await expect(page.locator('.project-facts')).toContainText('Fall 2025');
   await expect(page.locator('.case-media .gallery-item')).toHaveCount(1);
-  await expect(page.locator('.case-media .media-status')).toHaveText('Video / demo link to be added');
+  await expect(page.locator('.case-media .media-status, .case-media > a')).toHaveCount(0);
   await page.getByRole('dialog').getByRole('button', { name: 'Switch to Chinese' }).click();
   await expect(page.locator('.project-facts')).toContainText('114 學年度上學期');
   await page.reload();
@@ -53,7 +53,8 @@ test('all case routes and profile sections contain real supplied content in both
     await expect(page).toHaveURL(new RegExp(`/work/${id}$`));
     await expect(page.locator('.project-facts')).toBeVisible();
     await expect(page.locator('.panel-body')).not.toContainText('This bay is empty');
-    await expect(page.locator('.case-media')).toContainText('Video / demo link to be added');
+    await expect(page.locator('.panel-body')).not.toContainText(/to be added|pending|placeholder|will be added|will be documented/i);
+    await expect(page.locator('.case-media .media-status, .case-media > a')).toHaveCount(0);
   }
   await page.evaluate(() => { location.hash = '/work/little-spirit'; });
   await expect(page.locator('.case-media .gallery-item')).toHaveCount(1);
@@ -83,6 +84,10 @@ test('all case routes and profile sections contain real supplied content in both
   await expect(page.locator('.education-list>article')).toHaveCount(2);
   await expectLogosInsideFrames(page);
   await page.evaluate(() => { location.hash = '/resume'; });
+  await expect(page.locator('.resume-name')).toHaveText('劉宸希');
+  await page.getByRole('dialog').getByRole('button', { name: 'Switch to English' }).click();
+  await expect(page.locator('.resume-name')).toHaveText('ChenShi Liu');
+  await page.getByRole('dialog').getByRole('button', { name: 'Switch to Chinese' }).click();
   await expect(page.locator('.award-list>li')).toHaveCount(8);
   const resumeDownload = page.getByRole('link', { name: '下載履歷' });
   await expect(resumeDownload).toHaveAttribute('download', 'ChenShi Liu.pdf');

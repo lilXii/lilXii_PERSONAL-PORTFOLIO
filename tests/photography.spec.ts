@@ -64,7 +64,7 @@ test('phone can tap the camera and reach the sixth directory entry without overf
   await context.close();
 });
 
-test('video tabs expose real credits and missing media without fake playable links', async ({ page }) => {
+test('video tabs expose real credits without missing-media prompts or fake playable links', async ({ page }) => {
   await page.goto('/#/photography');
   await page.getByRole('dialog').getByRole('button', { name: 'Switch to Chinese' }).click();
   await page.getByRole('tab', { name: '現場轉播' }).click();
@@ -80,10 +80,13 @@ test('video tabs expose real credits and missing media without fake playable lin
   await expect(page.locator('.film-card').filter({ hasText: '不明來電' })).toContainText('導演 / 剪輯');
   await expect(page.locator('.film-card').filter({ hasText: '不明來電' })).toContainText('2019');
   await expect(page.locator('.film-card a, .film-card img')).toHaveCount(0);
+  await expect(page.locator('.film-grid')).not.toContainText(/待補|預留/);
+  await expect(page.locator('.film-card').filter({ hasText: '無限之岡' }).locator('p')).toHaveText('攝影');
   await page.getByRole('dialog').getByRole('button', { name: 'Switch to English' }).click();
   await expect(page.getByRole('tab', { name: 'Film & production' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('.film-card').filter({ hasText: '不明來電' })).toContainText('Director / Editor');
   await expect(page.locator('.film-card').filter({ hasText: 'Cinematography' })).toHaveCount(2);
+  await expect(page.locator('.film-grid')).not.toContainText(/to be added|pending/i);
   await page.locator('summary').filter({ hasText: 'Event films' }).click();
   await expect(page.locator('.credit-list details[open]')).toContainText('Cinematography / Editing for all listed films');
   await expect(page.locator('.credit-list details[open]')).toContainText('Cinematography / Editing for both productions');

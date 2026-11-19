@@ -22,14 +22,15 @@ export function CaseCards({ items, lang, navigate }: Props & { items: Project[] 
 }
 function Media({ item, lang }: { item: Project; lang: Lang }) {
   const t = translate(lang);
+  if (!item.gallery.length && !item.videoUrl) return null;
   return <section className="case-media" aria-label={t('Project media', '作品媒體')}>
-    {item.gallery.length ? <MediaGallery images={item.gallery} lang={lang} /> : <div className="media-placeholder"><span className="media-frame" aria-hidden="true">＋</span><div><strong>{t('Project images to be added', '作品圖片待補')}</strong><p>{t('Screenshots, prototypes or process documentation.', '預留畫面截圖、原型或製作過程紀錄。')}</p></div></div>}
-    {item.videoUrl ? <a className="text-link" href={item.videoUrl} target="_blank" rel="noreferrer">{t('Watch project video', '觀看作品影片')} ↗</a> : <p className="media-status">{t('Video / demo link to be added', '影片／展示連結待補')}</p>}
+    {!!item.gallery.length && <MediaGallery images={item.gallery} lang={lang} />}
+    {item.videoUrl && <a className="text-link" href={item.videoUrl} target="_blank" rel="noreferrer">{t('Watch project video', '觀看作品影片')} ↗</a>}
   </section>;
 }
 function AwardList({ lang, ids, navigate }: Props & { ids?: string[] }) {
   const t = translate(lang); const list = ids ? awards.filter(a => ids.includes(a.id)) : awards;
-  return <ul className="award-list">{list.map(item => <li key={item.id}><span className="award-year">{item.year ?? t('Year pending', '年份待補')}</span><div><strong>{item.title[lang]}</strong><p>{item.detail[lang]}</p>{!ids && item.projectId && <button className="text-link" onClick={() => navigate(projectRoute(item.projectId!))}>{t('View project', '查看作品')} ↗</button>}</div></li>)}</ul>;
+  return <ul className="award-list">{list.map(item => <li key={item.id}>{item.year && <span className="award-year">{item.year}</span>}<div><strong>{item.title[lang]}</strong><p>{item.detail[lang]}</p>{!ids && item.projectId && <button className="text-link" onClick={() => navigate(projectRoute(item.projectId!))}>{t('View project', '查看作品')} ↗</button>}</div></li>)}</ul>;
 }
 export function CaseStudy({ item, lang, navigate }: Props & { item: Project }) {
   const t = translate(lang);
@@ -76,8 +77,8 @@ function VideoPortfolio({ lang, navigate }: Props) {
       {tab === 'reels' ? <>
         <div className="reel-list">{reels.map(reel => <article className="reel-card" key={reel.id}>
           {reel.image && <img className="reel-cover" src={asset(reel.image)} alt={`${reel.title}${t(' cover', ' 封面')}`} width="1080" height="1920" decoding="async" />}
-          <div className="reel-copy"><span className="eyebrow">SELECTED REELS</span><h3>{reel.title}</h3><p>{reel.kind[lang]}</p><p>{reel.role?.[lang] ?? t('Individual role to be added', '個人職責待補')}</p>
-            {reel.url ? <a className="text-link" href={reel.url} target="_blank" rel="noopener noreferrer">{reel.linkLabel?.[lang] ?? t('Watch Reel', '觀看 Reel')} ↗</a> : <span className="media-status">{t('Reel link to be added', 'Reel 連結待補')}</span>}
+          <div className="reel-copy"><span className="eyebrow">SELECTED REELS</span><h3>{reel.title}</h3><p>{reel.kind[lang]}</p>{reel.role && <p>{reel.role[lang]}</p>}
+            {reel.url && <a className="text-link" href={reel.url} target="_blank" rel="noopener noreferrer">{reel.linkLabel?.[lang] ?? t('Watch Reel', '觀看 Reel')} ↗</a>}
           </div>
         </article>)}</div>
         <section className="detail-section"><h3>{t('Short-form & promotional video', '短影音與宣傳影片')}</h3>{shortFormExperience.map((item, i) => <p key={i}>{item[lang]}</p>)}</section>
@@ -90,7 +91,7 @@ function VideoPortfolio({ lang, navigate }: Props) {
         <MediaGallery images={images('34')} lang={lang} />
         <CreditList groups={broadcastCredits} lang={lang} />
       </> : <>
-        <div className="film-grid">{films.map(film => <article className="film-card" key={film.id}><span className="eyebrow">{film.kind[lang]}</span><h3>{film.title}</h3>{film.note && <p className="film-award">{film.note[lang]}</p>}<p>{film.role?.[lang] ?? t('Individual role to be added', '個人職責待補')} · {film.year ?? t('Year pending', '年份待補')}</p>{film.image && <img src={asset(film.image)} alt={film.title} loading="lazy" />}{film.url ? <a className="text-link" href={film.url} target="_blank" rel="noreferrer">{t('Watch film', '觀看影片')} ↗</a> : <span className="media-status">{t('Cover / video link to be added', '封面／影片連結待補')}</span>}</article>)}</div>
+        <div className="film-grid">{films.map(film => <article className="film-card" key={film.id}><span className="eyebrow">{film.kind[lang]}</span><h3>{film.title}</h3>{film.note && <p className="film-award">{film.note[lang]}</p>}{(film.role || film.year) && <p>{[film.role?.[lang], film.year].filter(Boolean).join(' · ')}</p>}{film.image && <img src={asset(film.image)} alt={film.title} loading="lazy" />}{film.url && <a className="text-link" href={film.url} target="_blank" rel="noreferrer">{t('Watch film', '觀看影片')} ↗</a>}</article>)}</div>
         <h3 className="section-heading">{t('Production credits', '節目與活動經歷')}</h3><CreditList groups={productionCredits} lang={lang} />
       </>}
     </section>
@@ -100,7 +101,6 @@ export function ThemeContent({ entry, lang, navigate }: Props & { entry: Entry }
   const t = translate(lang); const items = projects.filter(p => p.group === entry.id);
   if (entry.kind === 'story') return <>
     <CaseStudy item={items[0]} lang={lang} navigate={navigate} />
-    <p className="model-note">{t('This model is a stylized placeholder. The vehicle name, year and relationship to this experience are to be added.', '場景車輛為風格化占位模型。正式車名、年份與這段經歷的對應關係待補。')}</p>
     {entry.id === 'car-b' && <button className="text-link" onClick={() => navigate('/photography')}>{t('Explore video & live production', '查看影像與轉播')} ↗</button>}
   </>;
   return <><p className="panel-lead">{entry.summary[lang]}</p>{entry.kind === 'video' ? <VideoPortfolio lang={lang} navigate={navigate} /> : <>
@@ -147,12 +147,12 @@ export function DirectoryContent({ route, lang, navigate }: Props & { route: str
   if (route === '/education') return <Education lang={lang} />;
   if (route === '/resume') return <>
     <p className="panel-lead">{profile.headline[lang]}</p><p className="resume-name">{profile.name[lang]}</p><p className="section-intro">{profile.bio[lang]}</p>
-    <div className="resume-download">{profile.resume ? <a className="outline-button" href={asset(profile.resume)} download="ChenShi Liu.pdf">{t('Download résumé', '下載履歷')} ↗</a> : <><button className="outline-button" disabled>{t('PDF not yet available', '尚未提供 PDF')}</button><span>{t('Public résumé PDF to be added', '公開版履歷 PDF 待補')}</span></>}</div>
+    {profile.resume && <div className="resume-download"><a className="outline-button" href={asset(profile.resume)} download="ChenShi Liu.pdf">{t('Download résumé', '下載履歷')} ↗</a></div>}
     <h3 className="section-heading">{t('Experience', '工作經歷')}</h3><Timeline lang={lang} navigate={navigate} compact />
     <h3 className="section-heading">{t('Education', '教育背景')}</h3><Education lang={lang} />
     <h3 className="section-heading">{t('Skills', '專業技能')}</h3><ul className="resume-skills">{skills.map(s => <li key={s.title.en}><strong>{s.title[lang]}</strong><p>{s.body[lang]}</p></li>)}</ul>
     <h3 className="section-heading">{t('Awards & exhibitions', '獎項、入選與展出')}</h3><AwardList lang={lang} navigate={navigate} />
   </>;
-  if (route === '/contact') return <><p className="panel-lead">{contactCopy[lang]}</p><div className="contact-item"><span className="eyebrow">EMAIL</span>{profile.email ? <a href={`mailto:${profile.email}`}>{profile.email} ↗</a> : <p>{t('Public email to be added', '公開 Email 待補')}</p>}</div><div className="contact-item"><span className="eyebrow">{t('ELSEWHERE', '其他平台')}</span>{profile.socials.length ? profile.socials.map(link => <a key={link.url} href={link.url} target="_blank" rel="noreferrer">{link.label} ↗</a>) : <p>{t('Social links to be added', '社群連結待補')}</p>}</div></>;
+  if (route === '/contact') return <><p className="panel-lead">{contactCopy[lang]}</p>{profile.email && <div className="contact-item"><span className="eyebrow">EMAIL</span><a href={`mailto:${profile.email}`}>{profile.email} ↗</a></div>}{!!profile.socials.length && <div className="contact-item"><span className="eyebrow">{t('ELSEWHERE', '其他平台')}</span>{profile.socials.map(link => <a key={link.url} href={link.url} target="_blank" rel="noreferrer">{link.label} ↗</a>)}</div>}</>;
   return <><p className="panel-lead">{t('This link does not match an entry in the garage.', '這個連結沒有對應的車庫內容。')}</p><button className="primary-button" onClick={() => navigate('/projects')}>{t('Browse the work', '瀏覽作品')}<span aria-hidden="true">↗</span></button></>;
 }
